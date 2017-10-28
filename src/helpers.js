@@ -5,17 +5,22 @@ export const addHeatMap = map => {
       .then(response => response.json())
       .then(({ data }) => {
         const geoJsonData = {
-          "type": "FeatureCollection",
-          "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-          "features": []
+          type: 'FeatureCollection',
+          crs: {
+            type: 'name',
+            properties: {
+              name: 'urn:ogc:def:crs:OGC:1.3:CRS84'
+            }
+          },
+          features: []
         };
         geoJsonData.features = data.map(function(d) {
           const { time, geoLocation } = d;
           const { lat, long } = geoLocation;
           const feature = {
-            type: "Feature",
+            type: 'Feature',
             properties: {
-              id: "ak16994521",
+              id: 'ak16994521',
               mag: 2.3,
               time,
               felt: null,

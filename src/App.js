@@ -5,6 +5,7 @@ import Slider from 'rc-slider';
 import styled from 'styled-components';
 import { addHeatMap } from './helpers';
 import 'rc-slider/assets/index.css';
+import './slider.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -14,13 +15,23 @@ const MapContainer = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
-`
+`;
 const SliderContainer = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
   min-height: 64px;
-  background: rgba(255, 255, 2555, 0.5);
+  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+  overflow: hidden;
+`;
+const Header = styled.div`
+  position: absolute;
+  height: 64px;
+  top: 0;
+  width: 100vw;
+  z-index: 100;
+  background: #fff;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0));
 `;
 
 const years = {
@@ -76,6 +87,7 @@ class App extends Component {
   render() {
     return (
       <div>
+        <Header />
         <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
         <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
         <InputSlider marks={years} />
