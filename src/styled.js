@@ -34,3 +34,16 @@ export const Logo = styled.span`
   color: #fff;
   letter-spacing: 0.2em;
 `;
+
+export const MenuContainer = styled.div`
+position: absolute;
+top: 0;
+left: 0;
+z-index: 1000;
+line-height: 64px;
+margin-left: 20px;
+zoom: 1.25;
+.material-icons {
+  color: #fff;
+}
+`;

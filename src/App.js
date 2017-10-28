@@ -14,6 +14,7 @@ import {
   SliderContainer,
   Header,
   Logo,
+  MenuContainer,
 } from './styled';
 import Legend from './components/Legend';
 // assets
@@ -39,7 +40,23 @@ const InputSlider = ({ marks, onChange }) => {
   );
 };
 
+class Menu extends React.Component {
+  render() {
+    return (
+      <MenuContainer>
+      <i class="material-icons">&#xE5D2;</i>
+      </MenuContainer>
+    );
+  }
+}
+
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      trainingComplete: false,
+    };
+  }
   componentDidMount() {
     // create a light themed map
     this.lightThemeMap = new mapboxgl.Map({
@@ -47,18 +64,22 @@ class App extends React.Component {
       style: 'mapbox://styles/mapbox/light-v9',
       zoom: 2,
     });
-    // create a dark themed map
-    this.darkThemeMap = new mapboxgl.Map({
-      container: this.darkThemeMap,
-      style: 'mapbox://styles/mapbox/dark-v9',
-      zoom: 2,
-    });
     // adding a heatmap layers to both the maps
     addHeatMap(this.lightThemeMap);
-    addHeatMap(this.darkThemeMap);
-    // create a mapbox-gl-compare map
-    new MapBoxGLCompare(this.lightThemeMap, this.darkThemeMap, {
-      // mousemove: true
+  }
+  onTrainingComplete = () => {
+    this.setState({ trainingComplete: true }, () => {
+      // create a dark themed map
+      this.darkThemeMap = new mapboxgl.Map({
+        container: this.darkThemeMap,
+        style: 'mapbox://styles/mapbox/dark-v9',
+        zoom: 2,
+      });
+      addHeatMap(this.darkThemeMap);
+      // create a mapbox-gl-compare map
+      new MapBoxGLCompare(this.lightThemeMap, this.darkThemeMap, {
+        // mousemove: true
+      });
     });
   }
   onYearChange = value => {
@@ -68,7 +89,9 @@ class App extends React.Component {
       .then(response => response.json())
       .then(({ data }) => {
         this.lightThemeMap.getSource('patients').setData(getGeoJsonData(data));
-        this.darkThemeMap.getSource('patients').setData(getGeoJsonData(data));
+        if (this.state.trainingComplete) {
+          this.darkThemeMap.getSource('patients').setData(getGeoJsonData(data));
+        }
       });
   }
   render() {
@@ -81,11 +104,15 @@ class App extends React.Component {
     ]
     return (
       <AppWrapper>
+        <Menu />
         <Header>
           <Logo>predicto</Logo>
         </Header>
         <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
-        <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
+        {
+          this.state.trainingComplete &&
+          <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
+        }
         <InputSlider marks={years} onChange={this.onYearChange} />
         <Legend rows={rows} />
       </AppWrapper>

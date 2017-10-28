@@ -30,6 +30,7 @@ export const getGeoJsonData = rawData => {
     };
     const year = new Date(time).getFullYear();
     feature.properties.year = year;
+    feature.properties.diseaseType = d.diseaseType || "null";
     return feature;
   });
   return geoJsonData;
@@ -124,15 +125,12 @@ export const addHeatMap = map => {
                 },
                 //Color circle by earthquake magnitude
                 "circle-color": {
-                    "property": "mag",
-                    "type": "exponential",
+                    "property": "diseaseType",
+                    "type": "categorical",
                     "stops": [
-                        [1, "rgba(33,102,172,0)"],
-                        [2, "rgb(103,169,207)"],
-                        [3, "rgb(209,229,240)"],
-                        [4, "rgb(253,219,199)"],
-                        [5, "rgb(239,138,98)"],
-                        [6, "rgb(178,24,43)"]
+                        ["kidneyDamage", "rgb(239,138,98)"],
+                        ["diarrhoea", "rgb(178,24,43)"],
+                        ["null", "rgba(255, 255, 255, 0)"]
                     ]
                 },
                 "circle-stroke-color": "white",
