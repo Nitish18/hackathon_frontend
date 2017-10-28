@@ -1,51 +1,58 @@
+import { API_URL } from './config';
+
+export const getGeoJsonData = rawData => {
+  const geoJsonData = {
+    type: 'FeatureCollection',
+    crs: {
+      type: 'name',
+      properties: {
+        name: 'urn:ogc:def:crs:OGC:1.3:CRS84'
+      }
+    },
+    features: []
+  };
+  geoJsonData.features = rawData.map(function(d) {
+    const { time, latlng } = d;
+    const [lat, long] = latlng;
+    const feature = {
+      type: 'Feature',
+      properties: {
+        id: 'ak16994521',
+        mag: 2.3,
+        time,
+        felt: null,
+        tsunami: 0
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [ long, lat ]
+      }
+    };
+    const year = new Date(time).getFullYear();
+    feature.properties.year = year;
+    return feature;
+  });
+  return geoJsonData;
+};
+
 export const addHeatMap = map => {
-  const url = 'http://10.10.4.42:8001/getData';
   map.on('load', function() {
+    const url = `${API_URL}/getData`;
     fetch(url)
       .then(response => response.json())
       .then(({ data }) => {
-        const geoJsonData = {
-          type: 'FeatureCollection',
-          crs: {
-            type: 'name',
-            properties: {
-              name: 'urn:ogc:def:crs:OGC:1.3:CRS84'
-            }
-          },
-          features: []
-        };
-        geoJsonData.features = data.map(function(d) {
-          const { time, latlng } = d;
-          const [lat, long] = latlng;
-          const feature = {
-            type: 'Feature',
-            properties: {
-              id: 'ak16994521',
-              mag: 2.3,
-              time,
-              felt: null,
-              tsunami: 0
-            },
-            geometry: {
-              type: "Point",
-              coordinates: [ long, lat ]
-            }
-          };
-          const year = new Date(time).getFullYear();
-          feature.properties.year = year;
-          return feature;
-        });
+        const geoJsonData = getGeoJsonData(data);
         //Add a geojson point source.
         //Heatmap layers also work with a vector tile source.
-        map.addSource('earthquakes', {
+        map.addSource('patients', {
             type: 'geojson',
-            data: geoJsonData
+            data: geoJsonData,
         });
 
         // map.addLayer({
-        //     "id": "earthquakes-heat",
+        //     "id": "patients-heat",
         //     "type": "heatmap",
-        //     "source": "earthquakes",
+        //     "source": "patients",
         //     "maxzoom": 9,
         //     "paint": {
         //         //Increase the heatmap weight based on frequency and property magnitude
@@ -97,9 +104,9 @@ export const addHeatMap = map => {
         // }, 'waterway-label');
 
         map.addLayer({
-            "id": "earthquakes-point",
+            "id": "patients-point",
             "type": "circle",
-            "source": "earthquakes",
+            "source": "patients",
             // "minzoom": 7,
             "paint": {
                 //Size circle raidus by earthquake magnitude and zoom level

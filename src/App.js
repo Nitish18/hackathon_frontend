@@ -3,7 +3,8 @@ import mapboxgl from 'mapbox-gl';
 import MapBoxGLCompare from 'mapbox-gl-compare';
 import Slider from 'rc-slider';
 import styled from 'styled-components';
-import { addHeatMap } from './helpers';
+import { addHeatMap, getGeoJsonData } from './helpers';
+import { API_URL } from './config';
 import 'rc-slider/assets/index.css';
 import 'roboto-fontface';
 import './slider.css';
@@ -71,30 +72,34 @@ const InputSlider = ({ marks, onChange }) => {
 class App extends Component {
   componentDidMount() {
     // create a light themed map
-    const lightThemeMap = new mapboxgl.Map({
+    this.lightThemeMap = new mapboxgl.Map({
       container: this.lightThemeMap,
       style: 'mapbox://styles/mapbox/light-v9',
       zoom: 2,
     });
     // create a dark themed map
-    const darkThemeMap = new mapboxgl.Map({
+    this.darkThemeMap = new mapboxgl.Map({
       container: this.darkThemeMap,
       style: 'mapbox://styles/mapbox/dark-v9',
       zoom: 2,
     });
     // adding a heatmap layers to both the maps
-    addHeatMap(lightThemeMap);
-    addHeatMap(darkThemeMap);
+    addHeatMap(this.lightThemeMap);
+    addHeatMap(this.darkThemeMap);
     // create a mapbox-gl-compare map
-    new MapBoxGLCompare(lightThemeMap, darkThemeMap, {
+    new MapBoxGLCompare(this.lightThemeMap, this.darkThemeMap, {
       // mousemove: true
     });
   }
   onYearChange = value => {
     const year = years[value];
-    const filters = ['==', 'year', year];
-    this.mapboxMapRef.setFilter('earthquakes-heat', filters);
-    this.mapboxMapRef.setFilter('earthquakes-point', filters);
+    const url = `${API_URL}/getData?year=${year}`;
+    fetch(url)
+      .then(response => response.json())
+      .then(({ data }) => {
+        this.lightThemeMap.getSource('patients').setData(getGeoJsonData(data));
+        this.darkThemeMap.getSource('patients').setData(getGeoJsonData(data));
+      });
   }
   render() {
     return (
@@ -104,7 +109,7 @@ class App extends Component {
         </Header>
         <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
         <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
-        <InputSlider marks={years} />
+        <InputSlider marks={years} onChange={this.onYearChange} />
       </AppWrapper>
     );
   }
