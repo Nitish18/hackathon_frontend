@@ -23,7 +23,7 @@ export const Header = styled.div`
   width: 100vw;
   z-index: 100;
   background: #fff;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  background: rgba(108,154,173,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
