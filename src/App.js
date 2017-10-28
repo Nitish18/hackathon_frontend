@@ -4,7 +4,7 @@ import MapBoxGLCompare from 'mapbox-gl-compare';
 import Slider from 'rc-slider';
 import styled from 'styled-components';
 import { addHeatMap, getGeoJsonData } from './helpers';
-import { API_URL } from './config';
+import { API_URL, years } from './config';
 import 'rc-slider/assets/index.css';
 import 'roboto-fontface';
 import './slider.css';
@@ -47,24 +47,17 @@ const Logo = styled.span`
   letter-spacing: 0.2em;
 `;
 
-const years = {
-  0: 2010,
-  10: 2011,
-  20: 2012,
-  30: 2013,
-  40: 2014,
-  50: 2015,
-  60: 2016,
-  70: 2017,
-  80: 2018,
-  90: 2019,
-  100: 2020
-};
-
 const InputSlider = ({ marks, onChange }) => {
   return (
     <SliderContainer>
-      <Slider min={-10} marks={marks} step={null} defaultValue={20} onChange={onChange} />
+      <Slider
+        min={-10}
+        marks={marks}
+        step={null}
+        defaultValue={0}
+        max={110}
+        onChange={onChange}
+      />
     </SliderContainer>
   );
 };

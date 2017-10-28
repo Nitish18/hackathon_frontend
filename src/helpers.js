@@ -1,4 +1,4 @@
-import { API_URL } from './config';
+import { API_URL, years } from './config';
 
 export const getGeoJsonData = rawData => {
   const geoJsonData = {
@@ -37,7 +37,7 @@ export const getGeoJsonData = rawData => {
 
 export const addHeatMap = map => {
   map.on('load', function() {
-    const url = `${API_URL}/getData`;
+    const url = `${API_URL}/getData?year=${years[0]}`;
     fetch(url)
       .then(response => response.json())
       .then(({ data }) => {
