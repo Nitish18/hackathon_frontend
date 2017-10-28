@@ -5,10 +5,13 @@ import Slider from 'rc-slider';
 import styled from 'styled-components';
 import { addHeatMap } from './helpers';
 import 'rc-slider/assets/index.css';
+import 'roboto-fontface';
 import './slider.css';
+import './App.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
+const AppWrapper = styled.div``;
 const MapContainer = styled.div`
   width: 100vw;
   height: 100vh;
@@ -31,7 +34,16 @@ const Header = styled.div`
   width: 100vw;
   z-index: 100;
   background: #fff;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0));
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Logo = styled.span`
+  font-family: 'roboto';
+  font-size: 32px;
+  color: #fff;
+  letter-spacing: 0.2em;
 `;
 
 const years = {
@@ -86,12 +98,14 @@ class App extends Component {
   }
   render() {
     return (
-      <div>
-        <Header />
+      <AppWrapper>
+        <Header>
+          <Logo>predicto</Logo>
+        </Header>
         <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
         <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
         <InputSlider marks={years} />
-      </div>
+      </AppWrapper>
     );
   }
 }

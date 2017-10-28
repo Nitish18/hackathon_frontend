@@ -10,6 +10,7 @@
     "react-dom": "^16.0.0",
     "react-map-gl": "^3.1.1",
     "react-scripts": "1.0.14",
+    "roboto-fontface": "^0.8.0",
     "styled-components": "^2.2.2"
   },
   "scripts": {
