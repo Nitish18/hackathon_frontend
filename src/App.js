@@ -1,51 +1,28 @@
-import React, { Component } from 'react';
+// dependencies
+import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import MapBoxGLCompare from 'mapbox-gl-compare';
 import Slider from 'rc-slider';
-import styled from 'styled-components';
+// helpers
 import { addHeatMap, getGeoJsonData } from './helpers';
+// config
 import { API_URL, years } from './config';
+// components
+import {
+  AppWrapper,
+  MapContainer,
+  SliderContainer,
+  Header,
+  Logo,
+} from './styled';
+import Legend from './components/Legend';
+// assets
 import 'rc-slider/assets/index.css';
 import 'roboto-fontface';
 import './slider.css';
 import './App.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
-
-const AppWrapper = styled.div``;
-const MapContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-`;
-const SliderContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  min-height: 64px;
-  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
-  overflow: hidden;
-`;
-const Header = styled.div`
-  position: absolute;
-  height: 64px;
-  top: 0;
-  width: 100vw;
-  z-index: 100;
-  background: #fff;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0));
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Logo = styled.span`
-  font-family: 'roboto';
-  font-size: 32px;
-  color: #fff;
-  letter-spacing: 0.2em;
-`;
 
 const InputSlider = ({ marks, onChange }) => {
   return (
@@ -62,7 +39,7 @@ const InputSlider = ({ marks, onChange }) => {
   );
 };
 
-class App extends Component {
+class App extends React.Component {
   componentDidMount() {
     // create a light themed map
     this.lightThemeMap = new mapboxgl.Map({
@@ -95,6 +72,13 @@ class App extends Component {
       });
   }
   render() {
+    const rows = [
+      { color: '#07c', text: 'typhoid', count: '5.3m' },
+      { color: 'orange', text: 'malaria', count: '2.8m' },
+      { color: 'red', text: 'dengue', count: '8.1m' },
+      { color: 'purple', text: 'alzheimer', count: '0.3m' },
+      { color: 'green', text: 'Lymphosarcoma of the intestine', count: '0.01m' },
+    ]
     return (
       <AppWrapper>
         <Header>
@@ -103,6 +87,7 @@ class App extends Component {
         <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
         <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
         <InputSlider marks={years} onChange={this.onYearChange} />
+        <Legend rows={rows} />
       </AppWrapper>
     );
   }
