@@ -24,17 +24,17 @@ const SliderContainer = styled.div`
 `;
 
 const years = {
-  0: 1999,
-  10: 2000,
-  20: 2001,
-  30: 2002,
-  40: 2003,
-  50: 2004,
-  60: 2005,
-  70: 2006,
-  80: 2007,
-  90: 2008,
-  100: ''
+  0: 2010,
+  10: 2011,
+  20: 2012,
+  30: 2013,
+  40: 2014,
+  50: 2015,
+  60: 2016,
+  70: 2017,
+  80: 2018,
+  90: 2019,
+  100: 2020
 };
 
 const InputSlider = ({ marks, onChange }) => {
@@ -67,7 +67,8 @@ class App extends Component {
       // mousemove: true
     });
   }
-  onYearChange = year => {
+  onYearChange = value => {
+    const year = years[value];
     const filters = ['==', 'year', year];
     this.mapboxMapRef.setFilter('earthquakes-heat', filters);
     this.mapboxMapRef.setFilter('earthquakes-point', filters);

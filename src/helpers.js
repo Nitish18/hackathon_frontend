@@ -10,7 +10,8 @@ export const addHeatMap = map => {
           "features": []
         };
         geoJsonData.features = data.map(function(d) {
-          const { time, lat, long } = d;
+          const { time, geoLocation } = d;
+          const { lat, long } = geoLocation;
           const feature = {
             type: "Feature",
             properties: {
