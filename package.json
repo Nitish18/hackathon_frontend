@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "mapbox-gl": "^0.41.0",
+    "mapbox-gl-compare": "^0.1.0",
     "rc-slider": "^8.3.5",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
@@ -16,5 +17,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "devDependencies": {}
 }
