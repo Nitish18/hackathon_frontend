@@ -5829,6 +5829,10 @@ react-scripts@1.0.14:
   optionalDependencies:
     fsevents "1.1.2"
 
+react-snackbar@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-snackbar/-/react-snackbar-0.1.0.tgz#01f8c09a2d55a9e1516de868063b632722c909ca"
+
 "react@^15 || ^16", react@^16.0.0:
   version "16.0.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.0.0.tgz#ce7df8f1941b036f02b2cca9dbd0cb1f0e855e2d"

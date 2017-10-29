@@ -143,3 +143,5 @@ export const addHeatMap = map => {
       })
   });
 };
+
+// /trainSystem?year=2017

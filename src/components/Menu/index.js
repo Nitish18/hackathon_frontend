@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+// config
+import { API_URL } from './../../config';
 
 const MenuContainer = styled.div`
   position: absolute;
@@ -28,6 +30,22 @@ const MenuContainer = styled.div`
     position: absolute;
     top: 43px;
     left: -20px;
+    .buttons-container {
+      position: absolute;
+      top: 0px;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      width: 14vw;
+      height: 20vh;
+      margin: auto;
+      .button {
+        width: 100%;
+        border: 0;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+    }
   }
 `;
 
@@ -36,12 +54,54 @@ const openMenu = function () {
   this.setState({isOpened: !this.state.isOpened});
 }
 
+
 class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isOpened: false
+      isOpened: false,
+      isTraining: false
     }
+  }
+  triggerPolling() {
+    const year = 2016;
+    const url = `${API_URL}/trainSystem?year=${year}`;
+    return new Promise((resolve, reject) => {
+      fetch(url)
+        .then(response => resolve(response.json()))
+        .catch(err => {
+          reject(err)
+        });
+    });
+  }
+  trainData() {
+      console.log('Training data');
+      this.triggerPolling()
+      .then(response => {
+        const id = response.processId;
+        const url = `${API_URL}/getStatus?objId=${id}`;
+        const pollBackend = () => {
+          fetch(url)
+          .then(response => response.json())
+          .then(response => {
+            if (response.status === 'completed') {
+              clearInterval(pollingId);
+            }
+            console.log(response);
+          })
+          .catch(err => {
+            clearInterval(pollingId);
+            console.error(err);
+          });
+        }
+        const pollingId = setInterval(pollBackend, 5000);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+  returnToMap() {
+      console.log('Returning to Map');
   }
   render() {
     return (
@@ -50,7 +110,14 @@ class Menu extends React.Component {
           <i className="material-icons">&#xE5D2;</i>
         </button>
         {
-          this.state.isOpened && <div className="overlay-container"></div>
+          (this.state.isOpened ? (
+            <div className="overlay-container">
+              <div className="buttons-container">
+                <button type="button" className="button" name="trainData" onClick={this.trainData.bind(this)}>Train Data</button>
+                <button type="button" className="button" name="returnToMap" onClick={this.returnToMap.bind(this)}>Return to Map</button>
+              </div>
+            </div>
+          ) : null)
         }
       </MenuContainer>
     );
