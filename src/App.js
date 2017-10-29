@@ -65,6 +65,7 @@ class App extends React.Component {
     });
     // adding a heatmap layers to both the maps
     addHeatMap(this.lightThemeMapRef);
+    this.fetchLegend(years[0]);
   }
   onTrainingComplete = () => {
     this.setState({ trainingComplete: true }, () => {
