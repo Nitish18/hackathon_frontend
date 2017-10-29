@@ -40,44 +40,43 @@ const InputSlider = ({ marks, onChange }) => {
   );
 };
 
-class Menu extends React.Component {
-  render() {
-    return (
-      <MenuContainer>
-      <i class="material-icons">&#xE5D2;</i>
-      </MenuContainer>
-    );
-  }
-}
+const Menu = onClick => {
+  return (
+    <MenuContainer>
+      <i className="material-icons">&#xE5D2;</i>
+    </MenuContainer>
+  );
+};
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       trainingComplete: false,
+      legendRows: []
     };
   }
   componentDidMount() {
     // create a light themed map
-    this.lightThemeMap = new mapboxgl.Map({
+    this.lightThemeMapRef = new mapboxgl.Map({
       container: this.lightThemeMap,
       style: 'mapbox://styles/mapbox/light-v9',
       zoom: 2,
     });
     // adding a heatmap layers to both the maps
-    addHeatMap(this.lightThemeMap);
+    addHeatMap(this.lightThemeMapRef);
   }
   onTrainingComplete = () => {
     this.setState({ trainingComplete: true }, () => {
       // create a dark themed map
-      this.darkThemeMap = new mapboxgl.Map({
+      this.darkThemeMapRef = new mapboxgl.Map({
         container: this.darkThemeMap,
         style: 'mapbox://styles/mapbox/dark-v9',
         zoom: 2,
       });
-      addHeatMap(this.darkThemeMap);
+      addHeatMap(this.darkThemeMapRef);
       // create a mapbox-gl-compare map
-      new MapBoxGLCompare(this.lightThemeMap, this.darkThemeMap, {
+      new MapBoxGLCompare(this.lightThemeMapRef, this.darkThemeMapRef, {
         // mousemove: true
       });
     });
@@ -88,20 +87,29 @@ class App extends React.Component {
     fetch(url)
       .then(response => response.json())
       .then(({ data }) => {
-        this.lightThemeMap.getSource('patients').setData(getGeoJsonData(data));
+        const geoJsonData = getGeoJsonData(data);
+        this.lightThemeMapRef.getSource('patients').setData(geoJsonData);
         if (this.state.trainingComplete) {
-          this.darkThemeMap.getSource('patients').setData(getGeoJsonData(data));
+          this.darkThemeMapRef.getSource('patients').setData(geoJsonData);
         }
+        this.fetchLegend(year);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+  fetchLegend = year => {
+    const url = `${API_URL}/getLegend?year=${year}`;
+    fetch(url)
+      .then(response => response.json())
+      .then(legendRows => {
+        this.setState({ legendRows });
+      })
+      .catch(err => {
+        console.error(err);
       });
   }
   render() {
-    const rows = [
-      { color: '#07c', text: 'typhoid', count: '5.3m' },
-      { color: 'orange', text: 'malaria', count: '2.8m' },
-      { color: 'red', text: 'dengue', count: '8.1m' },
-      { color: 'purple', text: 'alzheimer', count: '0.3m' },
-      { color: 'green', text: 'Lymphosarcoma of the intestine', count: '0.01m' },
-    ]
     return (
       <AppWrapper>
         <Menu />
@@ -114,7 +122,7 @@ class App extends React.Component {
           <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
         }
         <InputSlider marks={years} onChange={this.onYearChange} />
-        <Legend rows={rows} />
+        <Legend rows={this.state.legendRows} />
       </AppWrapper>
     );
   }

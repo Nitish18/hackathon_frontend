@@ -49,14 +49,13 @@ const ColorCode = styled.div`
 const Text = styled.div`
   margin: 0 16px;
 `;
-const Number = styled.div`
-`
+const Number = styled.div``;
 
 const Row = ({ row={} }) => {
   return (
     <RowWrapper>
       <ColorCode color={row.color} />
-      <Text>{row.text}</Text>
+      <Text>{row.displayName || 'Unknown'}</Text>
       <Number>{row.count}</Number>
     </RowWrapper>
   );
@@ -68,8 +67,8 @@ const Legend = ({ rows=[] }) => {
       <Title>legend</Title>
       <Rows>
         {
-          rows.map(row => (
-            <Row row={row} />
+          rows.map((row, i) => (
+            <Row row={row} key={i} />
           ))
         }
       </Rows>
