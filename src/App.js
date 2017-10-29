@@ -69,7 +69,7 @@ class App extends React.Component {
         style: 'mapbox://styles/mapbox/dark-v9',
         zoom: 2,
       });
-      addHeatMap(this.darkThemeMapRef);
+      addHeatMap(this.darkThemeMapRef, true);
       // create a mapbox-gl-compare map
       new MapBoxGLCompare(this.lightThemeMapRef, this.darkThemeMapRef, {
         // mousemove: true
@@ -79,15 +79,25 @@ class App extends React.Component {
   onYearChange = value => {
     const year = years[value];
     const url = `${API_URL}/getData?year=${year}`;
+    // fetch real data
     fetch(url)
       .then(response => response.json())
       .then(({ data }) => {
         const geoJsonData = getGeoJsonData(data);
         this.lightThemeMapRef.getSource('patients').setData(geoJsonData);
+        this.fetchLegend(year);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+    const predictUrl = `${API_URL}/getPredictionResults?year=${year}`;
+    fetch(predictUrl)
+      .then(response => response.json())
+      .then(({ data }) => {
+        const geoJsonData = getGeoJsonData(data);
         if (this.state.trainingComplete) {
           this.darkThemeMapRef.getSource('patients').setData(geoJsonData);
         }
-        this.fetchLegend(year);
       })
       .catch(err => {
         console.error(err);

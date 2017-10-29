@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Loader } from 'react-loaders';
 // config
 import { API_URL } from './../../config';
 
@@ -48,7 +49,14 @@ const MenuContainer = styled.div`
     }
   }
 `;
-
+const Button = styled.div`
+  background: none;
+  color: #fff;
+  font-family: 'roboto';
+  font-size: 24px;
+  width: 300px;
+  cursor: pointer;
+`;
 
 class Menu extends React.Component {
   constructor(props) {
@@ -62,19 +70,18 @@ class Menu extends React.Component {
     const year = 2016;
     const url = `${API_URL}/trainSystem?year=${year}`;
     return new Promise((resolve, reject) => {
-      fetch(url)
-        .then(response => response.json())
-      // this.simulateAPI()
-        .then(data => { resolve(data); })
-        .catch(err => {
-          reject(err)
-        });
+      this.setState({ isTraining: true }, () => {
+        fetch(url)
+          .then(response => response.json())
+        // this.simulateAPI()
+          .then(data => {
+              resolve(data);
+          })
+          .catch(err => {
+            reject(err)
+          });
+      });
     });
-  }
-  simulateAPI = () => {
-    return new Promise(resolve => {
-      resolve({ status: 'completed' });
-    })
   }
   trainData() {
       console.log('Training data');
@@ -88,15 +95,19 @@ class Menu extends React.Component {
           // this.simulateAPI()
           .then(response => {
             if (response.status === 'completed') {
-              clearInterval(pollingId);
-              this.props.onTrainingComplete();
+              this.setState({ isTraining: false }, () => {
+                clearInterval(pollingId);
+                this.props.onTrainingComplete();
+              });
             }
             console.log(response);
           })
           .catch(err => {
-            clearInterval(pollingId);
-            this.props.onTrainingComplete();
-            console.error(err);
+            this.setState({ isTraining: false }, () => {
+              clearInterval(pollingId);
+              this.props.onTrainingComplete();
+              console.error(err);
+            });
           });
         }
         const pollingId = setInterval(pollBackend, 2000);
@@ -106,20 +117,25 @@ class Menu extends React.Component {
       });
   }
   returnToMap() {
-      console.log('Returning to Map');
+      this.props.toggleMenu();
   }
   render() {
+    let loader = <Loader type="line-scale-pulse-out" />;
+
     return (
       <MenuContainer>
         <button className="menu-button" onClick={this.props.toggleMenu}>
           <i className="material-icons">&#xE5D2;</i>
         </button>
         {
+          this.state.isTraining && loader
+        }
+        {
           (this.props.isMenuOpen ? (
             <div className="overlay-container">
               <div className="buttons-container">
-                <button type="button" className="button" name="trainData" onClick={this.trainData.bind(this)}>Train Data</button>
-                <button type="button" className="button" name="returnToMap" onClick={this.returnToMap.bind(this)}>Return to Map</button>
+                <Button name="trainData" onClick={this.trainData.bind(this)}>Train Data</Button>
+                <Button name="returnToMap" onClick={this.returnToMap.bind(this)}>Return to Map</Button>
               </div>
             </div>
           ) : null)

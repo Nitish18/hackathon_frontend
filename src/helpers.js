@@ -1,5 +1,16 @@
 import { API_URL, years } from './config';
 
+const defaultData = {
+  type: 'FeatureCollection',
+  crs: {
+    type: 'name',
+    properties: {
+      name: 'urn:ogc:def:crs:OGC:1.3:CRS84'
+    }
+  },
+  features: []
+};
+
 export const getGeoJsonData = (rawData=[]) => {
   const geoJsonData = {
     type: 'FeatureCollection',
@@ -12,8 +23,8 @@ export const getGeoJsonData = (rawData=[]) => {
     features: []
   };
   geoJsonData.features = rawData.map(function(d) {
-    const { time, latlang } = d;
-    const [lat, long] = latlang;
+    const { time, latlng } = d;
+    const [lat, long] = latlng;
     const feature = {
       type: 'Feature',
       properties: {
@@ -36,7 +47,7 @@ export const getGeoJsonData = (rawData=[]) => {
   return geoJsonData;
 };
 
-export const addHeatMap = map => {
+export const addHeatMap = (map, isPredicted) => {
   map.on('load', function() {
     const url = `${API_URL}/getData?year=${years[0]}`;
     fetch(url)
@@ -45,10 +56,17 @@ export const addHeatMap = map => {
         const geoJsonData = getGeoJsonData(data);
         //Add a geojson point source.
         //Heatmap layers also work with a vector tile source.
-        map.addSource('patients', {
-            type: 'geojson',
-            data: geoJsonData,
-        });
+        if (!isPredicted) {
+          map.addSource('patients', {
+              type: 'geojson',
+              data: geoJsonData,
+          });
+        } else {
+          map.addSource('patients', {
+              type: 'geojson',
+              data: defaultData,
+          });
+        }
 
         // map.addLayer({
         //     "id": "patients-heat",
@@ -128,6 +146,8 @@ export const addHeatMap = map => {
                     "property": "diseaseType",
                     "type": "categorical",
                     "stops": [
+                        ["WaterBorneDisease", "rgb(239,138,98)"],
+                        ["RespiratoryDisease", "rgb(178,24,43)"],
                         ["kidneyDamage", "rgb(239,138,98)"],
                         ["diarrhoea", "rgb(178,24,43)"],
                         ["null", "rgba(255, 255, 255, 0)"]
