@@ -49,11 +49,6 @@ const MenuContainer = styled.div`
   }
 `;
 
-const openMenu = function () {
-  console.log('Menu opened');
-  this.setState({isOpened: !this.state.isOpened});
-}
-
 
 class Menu extends React.Component {
   constructor(props) {
@@ -68,11 +63,18 @@ class Menu extends React.Component {
     const url = `${API_URL}/trainSystem?year=${year}`;
     return new Promise((resolve, reject) => {
       fetch(url)
-        .then(response => resolve(response.json()))
+        .then(response => response.json())
+      // this.simulateAPI()
+        .then(data => { resolve(data); })
         .catch(err => {
           reject(err)
         });
     });
+  }
+  simulateAPI = () => {
+    return new Promise(resolve => {
+      resolve({ status: 'completed' });
+    })
   }
   trainData() {
       console.log('Training data');
@@ -83,18 +85,21 @@ class Menu extends React.Component {
         const pollBackend = () => {
           fetch(url)
           .then(response => response.json())
+          // this.simulateAPI()
           .then(response => {
             if (response.status === 'completed') {
               clearInterval(pollingId);
+              this.props.onTrainingComplete();
             }
             console.log(response);
           })
           .catch(err => {
             clearInterval(pollingId);
+            this.props.onTrainingComplete();
             console.error(err);
           });
         }
-        const pollingId = setInterval(pollBackend, 5000);
+        const pollingId = setInterval(pollBackend, 2000);
       })
       .catch(err => {
         console.log(err);
@@ -106,11 +111,11 @@ class Menu extends React.Component {
   render() {
     return (
       <MenuContainer>
-        <button className="menu-button" onClick={openMenu.bind(this)}>
+        <button className="menu-button" onClick={this.props.toggleMenu}>
           <i className="material-icons">&#xE5D2;</i>
         </button>
         {
-          (this.state.isOpened ? (
+          (this.props.isMenuOpen ? (
             <div className="overlay-container">
               <div className="buttons-container">
                 <button type="button" className="button" name="trainData" onClick={this.trainData.bind(this)}>Train Data</button>

@@ -1,6 +1,6 @@
 import { API_URL, years } from './config';
 
-export const getGeoJsonData = rawData => {
+export const getGeoJsonData = (rawData=[]) => {
   const geoJsonData = {
     type: 'FeatureCollection',
     crs: {
@@ -12,8 +12,8 @@ export const getGeoJsonData = rawData => {
     features: []
   };
   geoJsonData.features = rawData.map(function(d) {
-    const { time, latlng } = d;
-    const [lat, long] = latlng;
+    const { time, latlang } = d;
+    const [lat, long] = latlang;
     const feature = {
       type: 'Feature',
       properties: {

@@ -11,6 +11,7 @@ import { API_URL, years } from './config';
 import {
   AppWrapper,
   MapContainer,
+  Content,
   SliderContainer,
   Header,
   Logo,
@@ -45,7 +46,8 @@ class App extends React.Component {
     super(props);
     this.state = {
       trainingComplete: false,
-      legendRows: []
+      legendRows: [],
+      isMenuOpen: false,
     };
   }
   componentDidMount() {
@@ -60,7 +62,7 @@ class App extends React.Component {
     this.fetchLegend(years[0]);
   }
   onTrainingComplete = () => {
-    this.setState({ trainingComplete: true }, () => {
+    this.setState({ trainingComplete: true, isMenuOpen: false }, () => {
       // create a dark themed map
       this.darkThemeMapRef = new mapboxgl.Map({
         container: this.darkThemeMap,
@@ -102,23 +104,34 @@ class App extends React.Component {
         console.error(err);
       });
   }
+  toggleMenu = () => {
+    this.setState({
+      isMenuOpen: !this.state.isMenuOpen
+    });
+  }
   render() {
     return (
       <AppWrapper>
-        <Menu />
+        <Menu
+          onTrainingComplete={this.onTrainingComplete}
+          isMenuOpen={this.state.isMenuOpen}
+          toggleMenu={this.toggleMenu}
+        />
         <Header>
           <Logo>predicto</Logo>
         </Header>
-        <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
-        {
-          this.state.trainingComplete &&
-          <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
-        }
-        <InputSlider marks={years} onChange={this.onYearChange} />
-        {
-          (this.state.legendRows.length) &&
-          <Legend rows={this.state.legendRows} />
-        }
+        <Content isMenuOpen={this.state.isMenuOpen}>
+          <MapContainer innerRef={map => { this.lightThemeMap = map; }} />
+          {
+            this.state.trainingComplete &&
+            <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
+          }
+          <InputSlider marks={years} onChange={this.onYearChange} />
+          {
+            (this.state.legendRows.length) &&
+            <Legend rows={this.state.legendRows} />
+          }
+        </Content>
       </AppWrapper>
     );
   }

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const AppWrapper = styled.div``;
 export const MapContainer = styled.div`
@@ -33,4 +33,13 @@ export const Logo = styled.span`
   font-size: 32px;
   color: #fff;
   letter-spacing: 0.2em;
+`;
+export const Content = styled.div`
+  ${({ isMenuOpen }) => {
+    if (isMenuOpen) {
+      return css`
+        filter: blur(4px);
+      `;
+    }
+  }}
 `;
