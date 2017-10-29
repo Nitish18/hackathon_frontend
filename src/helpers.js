@@ -137,6 +137,9 @@ export const addHeatMap = map => {
                 "circle-stroke-width": 1,
             }
         }, 'waterway-label');
-      });
+      })
+      .catch((errorObject) => {
+        console.log(errorObject);
+      })
   });
 };

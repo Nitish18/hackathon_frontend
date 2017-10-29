@@ -14,9 +14,9 @@ import {
   SliderContainer,
   Header,
   Logo,
-  MenuContainer,
 } from './styled';
 import Legend from './components/Legend';
+import Menu from './components/Menu';
 // assets
 import 'rc-slider/assets/index.css';
 import 'roboto-fontface';
@@ -37,14 +37,6 @@ const InputSlider = ({ marks, onChange }) => {
         onChange={onChange}
       />
     </SliderContainer>
-  );
-};
-
-const Menu = onClick => {
-  return (
-    <MenuContainer>
-      <i className="material-icons">&#xE5D2;</i>
-    </MenuContainer>
   );
 };
 
@@ -123,7 +115,10 @@ class App extends React.Component {
           <MapContainer innerRef={map => { this.darkThemeMap = map; }} />
         }
         <InputSlider marks={years} onChange={this.onYearChange} />
-        <Legend rows={this.state.legendRows} />
+        {
+          (this.state.legendRows.length) &&
+          <Legend rows={this.state.legendRows} />
+        }
       </AppWrapper>
     );
   }
